@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="color-scheme" content="light dark">
     <title>Phone Recovery Management System | Track & Recover Lost Device</title>
     <!-- Google Fonts & Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -15,23 +16,63 @@
             font-family: 'Inter', sans-serif;
         }
 
-        body {
-            background: linear-gradient(145deg, #f0f7ff 0%, #ffffff 100%);
-            color: #0a2540;
-            scroll-behavior: smooth;
-        }
-
-        /* Indian tricolor inspired: white background + deep saffron/blue accents */
+        /* ----- CSS VARIABLES (Light mode default) ----- */
         :root {
-            --primary-blue: #0f3b7a;
-            --bright-blue: #1e4d8f;
-            --accent-saffron: #ff8c42;
-            --accent-orange: #ff6a2c;
-            --light-sky: #eef3fc;
-            --pure-white: #ffffff;
-            --deep-indigo: #082544;
+            --bg-body: transparent;               /* fully transparent to show bg image */
+            --surface-card: #ffffff;
+            --surface-elevated: #fefefe;
+            --text-primary: #0a2540;
+            --text-secondary: #2c3e66;
+            --border-light: rgba(15, 59, 122, 0.1);
+            --border-faint: #cfdfed;
             --shadow-sm: 0 12px 28px rgba(0, 32, 64, 0.08);
             --shadow-md: 0 18px 36px -12px rgba(0, 0, 0, 0.12);
+            --accent-saffron: #ff8c42;
+            --accent-orange: #ff6a2c;
+            --primary-blue: #0f3b7a;
+            --bright-blue: #1e4d8f;
+            --stat-bg: #ffffff;
+            --fee-bg: #fff4e6;
+            --input-bg: #fefefe;
+            --footer-bg: rgba(255, 255, 245, 0.7);
+            --badge-bg: #eef2fa;
+            --toast-bg: #1f2b3b;
+        }
+
+        /* ----- DARK MODE (System preference) ----- */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --surface-card: #1e2a3a;
+                --surface-elevated: #15232e;
+                --text-primary: #eef2fc;
+                --text-secondary: #cbd5e6;
+                --border-light: rgba(255, 255, 255, 0.1);
+                --border-faint: #2d3e4f;
+                --shadow-sm: 0 12px 28px rgba(0, 0, 0, 0.4);
+                --shadow-md: 0 18px 36px -12px rgba(0, 0, 0, 0.5);
+                --accent-saffron: #ffa05e;
+                --accent-orange: #ff8c42;
+                --primary-blue: #3d7eb3;
+                --bright-blue: #5c9bd5;
+                --stat-bg: #1e2a3a;
+                --fee-bg: #1e2a2f;
+                --input-bg: #0f1a24;
+                --footer-bg: rgba(20, 30, 40, 0.85);
+                --badge-bg: #2a3a48;
+                --toast-bg: #2a3a48;
+            }
+        }
+
+        body {
+            /* TRANSPARENT BACKGROUND: only background image, no overlay */
+            background: url('https://static.vecteezy.com/system/resources/thumbnails/074/052/533/small/stack-of-old-smartphones-illustrating-technology-obsolescence-concept-photo.jpg?auto=compress&cs=tinysrgb&w=1600&h=900&dpr=2');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-color: #f0f7ff; /* fallback while image loads, but no overlay */
+            color: var(--text-primary);
+            scroll-behavior: smooth;
         }
 
         /* premium container */
@@ -39,6 +80,8 @@
             max-width: 1440px;
             margin: 0 auto;
             padding: 0 2rem;
+            position: relative;
+            z-index: 2;
         }
 
         /* Header & Navigation */
@@ -48,7 +91,7 @@
             align-items: center;
             flex-wrap: wrap;
             padding: 1.2rem 0;
-            border-bottom: 1px solid rgba(15, 59, 122, 0.1);
+            border-bottom: 1px solid var(--border-light);
         }
 
         .logo-area {
@@ -57,27 +100,33 @@
             gap: 12px;
         }
 
+        /* custom website icon (image src) */
         .logo-icon {
-            background: linear-gradient(135deg, #0f3b7a, #1e5ba6);
-            width: 48px;
-            height: 48px;
-            border-radius: 28px;
+            width: 52px;
+            height: 52px;
+            background: var(--surface-card);
+            border-radius: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 18px -6px rgba(15, 59, 122, 0.3);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease;
         }
-
-        .logo-icon i {
-            font-size: 26px;
-            color: white;
+        .logo-icon img {
+            width: 68%;
+            height: 68%;
+            object-fit: contain;
+            border-radius: 20px;
+        }
+        .logo-icon:hover {
+            transform: scale(1.02);
         }
 
         .logo-text h1 {
             font-size: 1.65rem;
             font-weight: 800;
             letter-spacing: -0.3px;
-            background: linear-gradient(120deg, #0f3b7a, #2b6eb3);
+            background: linear-gradient(120deg, var(--primary-blue), #2b6eb3);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -86,26 +135,26 @@
         .logo-text p {
             font-size: 0.7rem;
             font-weight: 500;
-            color: #ff8c42;
+            color: var(--accent-saffron);
             letter-spacing: 0.5px;
         }
 
         .fee-badge {
-            background: rgba(255, 140, 66, 0.12);
+            background: rgba(255, 140, 66, 0.15);
+            backdrop-filter: blur(8px);
             padding: 0.5rem 1.2rem;
             border-radius: 40px;
             font-weight: 600;
             font-size: 0.9rem;
             color: var(--accent-orange);
             border: 1px solid rgba(255, 108, 44, 0.3);
-            backdrop-filter: blur(2px);
         }
 
         .fee-badge i {
             margin-right: 6px;
         }
 
-        /* Hero section with images */
+        /* Hero section */
         .hero {
             display: flex;
             flex-wrap: wrap;
@@ -123,7 +172,7 @@
             font-size: 2.7rem;
             font-weight: 800;
             line-height: 1.2;
-            background: linear-gradient(to right, #0f3b7a, #2d6aa7);
+            background: linear-gradient(to right, var(--primary-blue), #2d6aa7);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -132,7 +181,7 @@
         .hero-text p {
             margin: 1rem 0 1.2rem;
             font-size: 1.05rem;
-            color: #2c3e66;
+            color: var(--text-secondary);
         }
 
         .hero-stats {
@@ -142,11 +191,12 @@
         }
 
         .stat {
-            background: white;
+            background: var(--stat-bg);
             padding: 0.5rem 1rem;
             border-radius: 40px;
             font-weight: 600;
             box-shadow: var(--shadow-sm);
+            color: var(--text-primary);
         }
 
         .hero-images {
@@ -158,13 +208,14 @@
         }
 
         .img-card {
-            background: white;
+            background: var(--surface-card);
             border-radius: 28px;
             padding: 12px;
             box-shadow: var(--shadow-md);
             transition: transform 0.2s ease;
             text-align: center;
             width: 110px;
+            color: var(--text-primary);
         }
 
         .img-card i {
@@ -181,12 +232,12 @@
 
         /* Form Section Premium */
         .form-section {
-            background: var(--pure-white);
+            background: var(--surface-card);
             border-radius: 2rem;
             box-shadow: var(--shadow-md);
             padding: 2rem 2rem 2.5rem;
             margin: 2rem 0 2.5rem;
-            border: 1px solid rgba(15, 59, 122, 0.1);
+            border: 1px solid var(--border-light);
         }
 
         .section-title {
@@ -195,6 +246,7 @@
             margin-bottom: 1rem;
             border-left: 6px solid var(--accent-saffron);
             padding-left: 1rem;
+            color: var(--text-primary);
         }
 
         .form-grid {
@@ -212,7 +264,7 @@
         .input-group label {
             font-weight: 600;
             font-size: 0.85rem;
-            color: #1e4663;
+            color: var(--text-secondary);
             letter-spacing: -0.2px;
         }
 
@@ -224,11 +276,12 @@
         input, select, textarea {
             padding: 12px 16px;
             border-radius: 18px;
-            border: 1px solid #cfdfed;
-            background: #fefefe;
+            border: 1px solid var(--border-faint);
+            background: var(--input-bg);
             font-size: 0.9rem;
             transition: all 0.2s;
             outline: none;
+            color: var(--text-primary);
         }
 
         input:focus, select:focus, textarea:focus {
@@ -247,12 +300,16 @@
         }
 
         .image-upload-area {
-            border: 2px dashed #bdd4ec;
+            border: 2px dashed var(--border-faint);
             border-radius: 24px;
             padding: 1rem;
-            background: #fafdff;
+            background: var(--surface-elevated);
             text-align: center;
             cursor: pointer;
+            transition: 0.2s;
+        }
+        .image-upload-area:hover {
+            border-color: var(--accent-saffron);
         }
 
         .preview-img {
@@ -263,7 +320,7 @@
         }
 
         .fee-preview {
-            background: linear-gradient(110deg, #fff4e6, #fff);
+            background: var(--fee-bg);
             border-radius: 24px;
             padding: 1rem 1.5rem;
             margin: 1rem 0 0;
@@ -271,11 +328,12 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            border: 1px solid #ffe0c0;
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
         }
 
         .btn-submit {
-            background: linear-gradient(100deg, #0f3b7a, #1a4e8a);
+            background: linear-gradient(100deg, var(--primary-blue), var(--bright-blue));
             border: none;
             padding: 16px 28px;
             border-radius: 48px;
@@ -291,21 +349,21 @@
         }
 
         .btn-submit:hover {
-            background: linear-gradient(100deg, #0c3268, #12487e);
             transform: translateY(-2px);
+            filter: brightness(1.05);
         }
 
         .message-toast {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: #1f2b3b;
+            background: var(--toast-bg);
             color: white;
             padding: 14px 24px;
             border-radius: 60px;
             font-weight: 500;
             z-index: 1000;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-md);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -323,9 +381,12 @@
         footer {
             text-align: center;
             padding: 2rem;
-            border-top: 1px solid rgba(0,0,0,0.05);
+            border-top: 1px solid var(--border-light);
             font-size: 0.85rem;
-            color: #2c5a7a;
+            color: var(--text-secondary);
+            background: var(--footer-bg);
+            border-radius: 32px 32px 0 0;
+            backdrop-filter: blur(4px);
         }
 
         @media (max-width: 800px) {
@@ -338,26 +399,32 @@
         }
 
         .badge-recovery {
-            background: #eef2fa;
+            background: var(--badge-bg);
             border-radius: 24px;
             padding: 6px 12px;
             font-size: 0.75rem;
+            color: var(--text-primary);
         }
 
-        .required-star::after {
-            content: "*";
-            color: #ff6a2c;
-            margin-left: 4px;
+        /* fix dark mode placeholder text */
+        ::placeholder {
+            color: #8f9eb2;
+        }
+        @media (prefers-color-scheme: dark) {
+            ::placeholder {
+                color: #7a8aa0;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Header with logo & premium feel -->
+    <!-- Header with custom logo image (src file) -->
     <div class="navbar">
         <div class="logo-area">
             <div class="logo-icon">
-                <i class="fas fa-mobile-alt"></i>
+                <img src="https://i.ibb.co/DfGM0y4B/20260326-174852.png" alt="Phone Recovery Icon">
+                <!-- Replace with your own local image path if needed -->
             </div>
             <div class="logo-text">
                 <h1>Phone Recovery Managment System</h1>
@@ -369,7 +436,7 @@
         </div>
     </div>
 
-    <!-- Hero visuals: phone lost, map, police, hoodie man -->
+    <!-- Hero visuals -->
     <div class="hero">
         <div class="hero-text">
             <h2>Lost your phone? <br>We bring it back.</h2>
@@ -466,12 +533,12 @@
                 <div class="input-group">
                     <label><i class="fas fa-file-image"></i> Upload Bill Box / FIR Report *</label>
                     <div class="image-upload-area" id="imageUploadBox">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color:#1e4d8f;"></i>
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary-blue);"></i>
                         <p>Click to upload image (JPG/PNG)</p>
                         <input type="file" id="proofImage" accept="image/*" style="display: none;">
                         <img id="imagePreview" class="preview-img" style="display: none;">
                     </div>
-                    <small style="color:#ff6a2c;">* Image will be attached in your email manually (or you can send separately) for privacy</small>
+                    <small style="color: var(--accent-orange);">* Image will be attached in your email manually (or you can send separately) for privacy</small>
                 </div>
             </div>
 
@@ -482,7 +549,7 @@
             </div>
 
             <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> SUBMIT LOST REPORT & SEND TO TEAM</button>
-            <p style="font-size: 0.75rem; margin-top: 12px; text-align: center;">We will contact you within 24h. After recovery, 30% fee applies.</p>
+            <p style="font-size: 0.75rem; margin-top: 12px; text-align: center; color: var(--text-secondary);">We will contact you within 24h. After recovery, 30% fee applies.</p>
         </form>
     </div>
 
@@ -494,16 +561,14 @@
 
 <script>
     (function() {
-        // DOM elements
         const form = document.getElementById('lostPhoneForm');
         const phoneValueInput = document.getElementById('phoneValue');
         const feeSpan = document.getElementById('feeShow');
         const fileInput = document.getElementById('proofImage');
         const imageUploadBox = document.getElementById('imageUploadBox');
         const previewImg = document.getElementById('imagePreview');
-        let uploadedFile = null;   // store file for mailto note
+        let uploadedFile = null;
 
-        // Update fee dynamically
         function updateFee() {
             let value = parseFloat(phoneValueInput.value);
             if (isNaN(value) || value <= 0) {
@@ -516,7 +581,6 @@
         phoneValueInput.addEventListener('input', updateFee);
         updateFee();
 
-        // Image upload handler with preview
         imageUploadBox.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', function(e) {
             if (this.files && this.files[0]) {
@@ -534,22 +598,14 @@
             }
         });
 
-        // show toast helper
         function showToast(message, isError = false) {
             const toast = document.getElementById('toastMessage');
             toast.querySelector('span').innerText = message;
             toast.classList.add('show');
-            if (!isError) {
-                toast.style.background = "#0f3b7a";
-            } else {
-                toast.style.background = "#b91c1c";
-            }
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
+            toast.style.background = isError ? "#b91c1c" : "var(--toast-bg)";
+            setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
-        // Build comprehensive email body with all fields & remind about image attachment.
         function buildEmailBody(formDataMap) {
             let body = "📱 LOST PHONE REPORT - Phone Recovery Management System 📱\n\n";
             body += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
@@ -577,11 +633,9 @@
             return body;
         }
 
-        // Submit handler: collect all data and open mailto with full body, also inform about manual attachment.
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // required fields check
             const customerName = document.getElementById('customerName').value.trim();
             const ownerName = document.getElementById('ownerName').value.trim();
             const ownerContact = document.getElementById('ownerContact').value.trim();
@@ -624,7 +678,6 @@
             const subject = `LOST PHONE REPORT: ${customerName} | IMEI ${imei1.slice(-4)}`;
             const mailtoLink = `mailto:lostphonelocatorwithdetails@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
 
-            // Special instruction: Because mailto cannot auto attach files, we guide user to manually attach image
             let userMessage = "";
             if(uploadedFile) {
                 userMessage = `✅ Report details prepared. Your email client will open.\n\n⚠️ IMPORTANT: Please MANUALLY attach the uploaded image (${uploadedFile.name}) to the email before sending to complete your report.\n\nIf image not attached, our team may ask for proof later.`;
@@ -632,18 +685,10 @@
                 userMessage = `✅ Report data compiled. Email client will open. Please send to complete your submission. (No image uploaded)`;
             }
 
-            // Open mail client
             window.location.href = mailtoLink;
-
-            // Show nice toast message with instructions for image attachment
             showToast(userMessage, false);
-
-            // Optional: store locally a backup in session
-            console.log("Report prepared", formDataMap);
-            // reset form? Not resetting to allow user to keep image reference, but we can keep fields
-            // Optionally clear image note but not compulsory
         });
     })();
 </script>
 </body>
-</html>
+</html>solescence-concept-photo.jpg
