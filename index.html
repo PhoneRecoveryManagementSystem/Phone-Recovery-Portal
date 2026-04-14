@@ -4,109 +4,485 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="color-scheme" content="light dark">
-<meta name="google-site-verification" content="c0Tkq5-W2v0F-b7cWZkCwztnH0Dj9qiwmYFqUz0XMaI" />
-    <title>Phone Recovery Management System | Track & Recover Lost Device</title>
-    <!-- Google Fonts & Font Awesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <title>Phone Recovery Portal — IMEI Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* ----- CSS VARIABLES (Light mode default) ----- */
         :root {
-            --bg-body: transparent;               /* fully transparent to show bg image */
-            --surface-card: #ffffff;
-            --surface-elevated: #fefefe;
-            --text-primary: #0a2540;
-            --text-secondary: #2c3e66;
-            --border-light: rgba(15, 59, 122, 0.1);
-            --border-faint: #cfdfed;
-            --shadow-sm: 0 12px 28px rgba(0, 32, 64, 0.08);
-            --shadow-md: 0 18px 36px -12px rgba(0, 0, 0, 0.12);
-            --accent-saffron: #ff8c42;
-            --accent-orange: #ff6a2c;
-            --primary-blue: #0f3b7a;
-            --bright-blue: #1e4d8f;
-            --stat-bg: #ffffff;
-            --fee-bg: #fff4e6;
-            --input-bg: #fefefe;
-            --footer-bg: rgba(255, 255, 245, 0.7);
-            --badge-bg: #eef2fa;
-            --toast-bg: #1f2b3b;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent-glow: #ff8c42;
+            --text-main: #ffffff;
+            --text-secondary: #e2e8f0;
+            --card-radius: 28px;
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-
-        /* ----- DARK MODE (System preference) ----- */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --surface-card: #1e2a3a;
-                --surface-elevated: #15232e;
-                --text-primary: #eef2fc;
-                --text-secondary: #cbd5e6;
-                --border-light: rgba(255, 255, 255, 0.1);
-                --border-faint: #2d3e4f;
-                --shadow-sm: 0 12px 28px rgba(0, 0, 0, 0.4);
-                --shadow-md: 0 18px 36px -12px rgba(0, 0, 0, 0.5);
-                --accent-saffron: #ffa05e;
-                --accent-orange: #ff8c42;
-                --primary-blue: #3d7eb3;
-                --bright-blue: #5c9bd5;
-                --stat-bg: #1e2a3a;
-                --fee-bg: #1e2a2f;
-                --input-bg: #0f1a24;
-                --footer-bg: rgba(20, 30, 40, 0.85);
-                --badge-bg: #2a3a48;
-                --toast-bg: #2a3a48;
-            }
-        }
-
+        body { --dynamic-primary: #00d2ff; --dynamic-secondary: #92fe9d; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         body {
-            /* TRANSPARENT BACKGROUND: only background image, no overlay */
-            background: url('https://wallpapers.com/images/hd/plain-black-desktop-2560-x-1440-ugpl0479gu0vuwnl.jpg?auto=compress&cs=tinysrgb&w=1600&h=900&dpr=2');
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-color: #f0f7ff; /* fallback while image loads, but no overlay */
-            color: var(--text-primary);
-            scroll-behavior: smooth;
+            background: linear-gradient(145deg, #0b1120, #111827);
+            background-image: radial-gradient(at 0% 0%, rgba(0,210,255,0.12) 0, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(146,254,157,0.12) 0, transparent 50%),
+                              url('https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDI0LTAyL3Jhd3BpeGVsX29mZmljZV81NV9hYnN0cmFjdF9uZW9uX2dlb21ldHJpY19iYWNrZ3JvdW5kLV93YXZ5X2dyYV82OTdhYmVhNi0xZGE1LTRlOWItOGZiNi03ZDRmYjQ0OWNjMjJfMS5qcGc.jpg');
+            background-size: cover; background-attachment: fixed; background-blend-mode: overlay;
+            color: var(--text-main); min-height: 100vh;
         }
-
-        /* premium container */
-        .container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            position: relative;
-            z-index: 2;
+        .fade-in { animation: fadeInUp 0.7s cubic-bezier(0.2,0.9,0.4,1.1) forwards; opacity: 0; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        header {
+            position: sticky; top: 0; z-index: 1000; background: rgba(15,23,42,0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border); padding: 0.9rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
         }
-
-        /* Header & Navigation */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            padding: 1.2rem 0;
-            border-bottom: 1px solid var(--border-light);
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 1.4rem; width: 42px; height: 42px; border-radius: 30px; cursor: pointer; transition: 0.2s; }
+        .menu-icon:hover { background: var(--dynamic-primary); color: #0f172a; }
+        .logo h1 { font-size: 1.6rem; font-weight: 800; background: linear-gradient(to right, var(--dynamic-primary), var(--dynamic-secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .sub-header-text { font-size: 0.7rem; opacity: 0.8; margin-top: 4px; }
+        nav { display: flex; gap: 2rem; margin-left: auto; }
+        nav a { color: var(--text-main); text-decoration: none; font-weight: 500; opacity: 0.8; transition: 0.2s; font-size: 0.9rem; }
+        nav a:hover { opacity: 1; color: var(--dynamic-primary); }
+        .side-menu {
+            position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: rgba(10,20,30,0.95); backdrop-filter: blur(24px);
+            border-right: 1px solid var(--glass-border); z-index: 1100; transition: left 0.35s cubic-bezier(0.2,0.9,0.4,1.1); padding: 2rem 1.5rem;
+            display: flex; flex-direction: column; gap: 1.8rem;
         }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .side-menu.open { left: 0; }
+        .menu-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1050; display: none; }
+        .menu-overlay.active { display: block; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 40px; background: rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; font-weight: 500; }
+        .menu-item:hover { background: var(--dynamic-primary); color: #0f172a; transform: translateX(6px); }
+        .container { max-width: 1300px; margin: 2rem auto; padding: 0 1.5rem; }
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px) saturate(180%); border: 1px solid var(--glass-border); border-radius: var(--card-radius); padding: 2rem; box-shadow: var(--shadow-lg); margin-bottom: 2rem; transition: transform 0.2s; }
+        .glass-card:hover { transform: translateY(-3px); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1.5rem; margin-top: 1rem; }
+        .stat-card { background: rgba(0,0,0,0.3); border-radius: 24px; padding: 1.2rem; text-align: center; backdrop-filter: blur(4px); border: 1px solid var(--glass-border); }
+        .stat-number { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, var(--dynamic-primary), var(--dynamic-secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .offer-grid { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
+        .offer-item { background: rgba(0,210,255,0.1); border-radius: 24px; padding: 1rem 1.5rem; flex: 1; min-width: 200px; border-left: 3px solid var(--dynamic-primary); }
+        .quick-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .quick-btn { background: rgba(0,210,255,0.15); border: 1px solid var(--dynamic-primary); padding: 0.6rem 1.3rem; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; transition: 0.2s; }
+        .quick-btn:hover { background: var(--dynamic-primary); color: #0f172a; transform: translateY(-2px); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .input-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.75rem; opacity: 0.7; margin-bottom: 0.3rem; }
+        input, select, textarea { width: 100%; background: rgba(255,255,255,0.07); border: 1px solid var(--glass-border); border-radius: 18px; padding: 12px 14px; color: white; outline: none; transition: 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--dynamic-primary); background: rgba(255,255,255,0.12); }
+        .brand-select { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+        .brand-option { background: rgba(255,255,255,0.05); border-radius: 40px; padding: 6px 14px; cursor: pointer; transition: 0.2s; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 6px; }
+        .brand-option.selected { background: var(--dynamic-primary); color: #0f172a; font-weight: bold; }
+        .image-upload { border: 2px dashed var(--glass-border); border-radius: 20px; padding: 0.8rem; text-align: center; cursor: pointer; }
+        .preview-img { max-width: 80px; border-radius: 16px; margin-top: 6px; }
+        .fee-preview { background: rgba(0,0,0,0.3); border-radius: 20px; padding: 0.8rem 1.2rem; margin: 1rem 0; display: flex; justify-content: space-between; }
+        .btn-liquid { background: linear-gradient(45deg, var(--dynamic-primary), var(--dynamic-secondary)); border: none; padding: 14px; border-radius: 50px; color: #0f172a; font-weight: 800; width: 100%; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .btn-liquid:hover { transform: scale(1.01); filter: brightness(1.05); }
+        .reviews-header, .feedback-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .review-image-btn, .feedback-add-btn { background: var(--accent-glow); border: none; padding: 8px 18px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .review-image-btn:hover, .feedback-add-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
+        .reviews-grid, .feedback-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .review-card, .feedback-card { background: rgba(255,255,255,0.05); border-radius: 24px; padding: 1.2rem; border: 1px solid rgba(255,255,255,0.1); }
+        .reviewer, .feedback-author { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .reviewer-img, .feedback-img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--dynamic-primary); }
+        .instagram-handle { font-size: 0.7rem; color: var(--dynamic-primary); }
+        .stars { color: #ffb84d; font-size: 0.7rem; letter-spacing: 2px; }
+        .recovery-phone-img, .feedback-attachment { width: 100%; max-height: 150px; object-fit: cover; border-radius: 18px; margin-top: 12px; border: 1px solid rgba(255,255,255,0.2); }
+        .footer-social { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+        .footer-social a { color: var(--text-main); text-decoration: none; font-size: 0.85rem; transition: 0.2s; }
+        .footer-social a:hover { color: var(--dynamic-primary); }
+        .feedback-float { 
+            position: fixed; bottom: 30px; right: 30px; background: var(--accent-glow); 
+            width: 58px; height: 58px; border-radius: 60px; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; z-index: 200; box-shadow: 0 8px 20px rgba(0,0,0,0.3); 
+            transition: 0.2s; text-decoration: none; color: white;
         }
+        .feedback-float:hover { transform: scale(1.1); background: var(--dynamic-primary); }
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 3000; visibility: hidden; opacity: 0; transition: 0.2s; }
+        .modal.active { visibility: visible; opacity: 1; }
+        .modal-card { background: #1e293b; border-radius: 32px; padding: 2rem; width: 90%; max-width: 500px; text-align: center; }
+        .modal-card input, .modal-card textarea { margin-bottom: 12px; width: 100%; background: #0f172a; color: white; border: 1px solid var(--glass-border); border-radius: 18px; padding: 10px; }
+        .toast { position: fixed; bottom: 30px; left: 30px; background: #1f2b3e; padding: 10px 20px; border-radius: 50px; z-index: 1100; opacity: 0; transition: 0.2s; pointer-events: none; }
+        footer { text-align: center; padding: 1.5rem; font-size: 0.75rem; opacity: 0.7; border-top: 1px solid var(--glass-border); margin-top: 2rem; }
+        .design-credit { margin-top: 0.5rem; font-size: 0.7rem; letter-spacing: 0.5px; }
+        @media (max-width: 780px) { .grid-2 { grid-template-columns: 1fr; } header { flex-direction: column; gap: 0.8rem; } nav { margin-left: 0; justify-content: center; } }
+    </style>
+</head>
+<body>
 
-        /* custom website icon (image src) */
-        .logo-icon {
-            width: 52px;
-            height: 52px;
-            background: var(--surface-card);
-            border-radius: 32px;
+<div class="side-menu" id="sideMenu">
+    <div style="font-size:1.4rem; font-weight:700;"><i class="fas fa-headset"></i> Support Hub</div>
+    <div class="menu-item" id="menuHome"><i class="fas fa-home"></i> Dashboard</div>
+    <div class="menu-item" id="menuReports"><i class="fas fa-file-alt"></i> My Reports</div>
+    <div class="menu-item" id="menuLiveChat"><i class="fas fa-comment-dots"></i> Live Agent</div>
+    <div class="menu-item" id="menuGuides"><i class="fas fa-book"></i> Recovery Guides</div>
+    <div class="menu-item" id="menuCall"><i class="fas fa-phone-alt"></i> Callback</div>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<header>
+    <div class="logo">
+        <button class="menu-icon" id="menuToggleBtn"><i class="fas fa-bars"></i></button>
+        <div>
+            <h1>Phone Recovery Portal</h1>
+            <div class="sub-header-text">Hi, We are from Mobile Recovery Service – Internal IMEI Management System Platform.</div>
+        </div>
+    </div>
+    <nav>
+        <a href="#dashboard">📊 Recovery Stats</a>
+        <a href="#report-form">📝 File Report</a>
+        <a href="#reviews-section">⭐ Success Stories</a>
+        <a href="#feedback-section">💬 Feedback</a>
+        <a href="#contact">📞 Contact</a>
+    </nav>
+</header>
+
+<div class="container">
+    <!-- Global Status -->
+    <div class="glass-card fade-in">
+        <h2><i class="fas fa-globe-americas"></i> Global Recovery Status</h2>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number" id="totalRecovered">10,284</div><div>Devices Recovered</div></div>
+            <div class="stat-card"><div class="stat-number" id="activeCases">1,247</div><div>Active Cases</div></div>
+            <div class="stat-card"><div class="stat-number" id="successRate">84.6%</div><div>Success Rate</div></div>
+            <div class="stat-card"><div class="stat-number" id="partnerNetworks">42</div><div>Partner Networks</div></div>
+        </div>
+    </div>
+
+    <!-- Recovery Performance Graph -->
+    <div class="glass-card fade-in" id="dashboard">
+        <h2 style="margin-bottom: 0.5rem;"><i class="fas fa-chart-line"></i> Global Recovery Performance</h2>
+        <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 1rem;">Monthly successful returns | Customer verified</p>
+        <canvas id="recoveryChart" style="max-height: 240px; width:100%"></canvas>
+        <div class="tagline" style="margin-top: 1rem; text-align:center; font-size:0.75rem;">✨ Get on the same page. <strong>In the same space.</strong> — 24/7 customer service</div>
+    </div>
+
+    <!-- What We Offer -->
+    <div class="glass-card fade-in">
+        <h2><i class="fas fa-gem"></i> What we offer</h2>
+        <p style="margin: 0.5rem 0 1rem 0;">We provide Digital Mobile Recovery Services for phones that are lost, stolen, or misplaced. Our goal is to help people recover their devices through technical investigation and digital tracking methods.</p>
+        <div class="offer-grid">
+            <div class="offer-item"><i class="fas fa-search-location"></i> 🔎 Our Service: If your mobile phone is lost or stolen — even if it is an old device — we may be able to help you attempt recovery.</div>
+            <div class="offer-item"><i class="fas fa-microchip"></i> IMEI Tracking & Blacklist Monitoring</div>
+            <div class="offer-item"><i class="fas fa-shield-alt"></i> Police Coordination & Digital Forensics</div>
+        </div>
+    </div>
+
+    <!-- Quick action buttons -->
+    <div class="quick-row fade-in">
+        <button class="quick-btn" id="quickLostBtn"><i class="fas fa-mobile-alt"></i> Report Lost</button>
+        <button class="quick-btn" id="quickStolenBtn"><i class="fas fa-shield-alt"></i> Report Stolen</button>
+        <button class="quick-btn" id="quickIMEIBtn"><i class="fas fa-microchip"></i> IMEI Block</button>
+        <button class="quick-btn" id="quickStatusBtn"><i class="fas fa-chart-line"></i> Recovery Status</button>
+    </div>
+
+    <!-- Report Form -->
+    <div class="glass-card fade-in" id="report-form">
+        <h2 style="margin-bottom: 1.2rem;"><i class="fas fa-file-signature"></i> Lost / Stolen Device Report</h2>
+        <form id="lostPhoneForm">
+            <div class="grid-2">
+                <div class="input-group"><label>Full Name *</label><input type="text" id="customerName" required></div>
+                <div class="input-group"><label>Owner Name</label><input type="text" id="ownerName"></div>
+                <div class="input-group"><label>Contact Number *</label><input type="tel" id="ownerContact" required></div>
+                <div class="input-group"><label>Lost Location *</label><input type="text" id="lostPlace" required></div>
+                <div class="input-group"><label>Lost Date & Time *</label><input type="datetime-local" id="lostDateTime" required></div>
+                <div class="input-group"><label>Police Report *</label><select id="policeReport" required><option value="">--Select--</option><option>Yes, FIR filed</option><option>No, not yet</option></select></div>
+                <div class="input-group"><label>Current Address *</label><input type="text" id="currentAddress" required></div>
+                <div class="input-group"><label>Delivery Address *</label><input type="text" id="deliveryPlace" required></div>
+                <div class="input-group"><label>Lost Phone Number 1 *</label><input type="tel" id="phoneNumber1" required></div>
+                <div class="input-group"><label>Lost Phone Number 2</label><input type="tel" id="phoneNumber2"></div>
+                <div class="input-group"><label>IMEI (SIM1) *</label><input type="text" id="imei1" maxlength="15" required></div>
+                <div class="input-group"><label>IMEI (SIM2)</label><input type="text" id="imei2" maxlength="15"></div>
+                <div class="input-group"><label>Email *</label><input type="email" id="userEmail" required></div>
+                <div class="input-group"><label>Phone Value (₹) *</label><input type="number" id="phoneValue" step="1000" required></div>
+            </div>
+
+            <!-- All Brands with icons -->
+            <div class="input-group">
+                <label>Select Phone Brand *</label>
+                <div class="brand-select" id="brandSelector">
+                    <div data-brand="Apple" class="brand-option"><i class="fab fa-apple"></i> Apple</div>
+                    <div data-brand="Vivo" class="brand-option"><i class="fas fa-mobile-alt"></i> Vivo</div>
+                    <div data-brand="Samsung" class="brand-option"><i class="fab fa-android"></i> Samsung</div>
+                    <div data-brand="Asus" class="brand-option"><i class="fas fa-laptop"></i> Asus</div>
+                    <div data-brand="Xiaomi" class="brand-option"><i class="fas fa-microchip"></i> Xiaomi</div>
+                    <div data-brand="OnePlus" class="brand-option"><i class="fas fa-bolt"></i> OnePlus</div>
+                    <div data-brand="Realme" class="brand-option"><i class="fas fa-rocket"></i> Realme</div>
+                    <div data-brand="Google Pixel" class="brand-option"><i class="fab fa-google"></i> Google Pixel</div>
+                    <div data-brand="iQOO" class="brand-option"><i class="fas fa-gamepad"></i> iQOO</div>
+                    <div data-brand="Oppo" class="brand-option"><i class="fas fa-camera"></i> Oppo</div>
+                    <div data-brand="Tecno" class="brand-option"><i class="fas fa-globe"></i> Tecno</div>
+                    <div data-brand="Mi" class="brand-option"><i class="fas fa-charging-station"></i> Mi</div>
+                    <div data-brand="Sony" class="brand-option"><i class="fas fa-headphones"></i> Sony</div>
+                    <div data-brand="Other" class="brand-option"><i class="fas fa-question-circle"></i> Other</div>
+                </div>
+                <input type="hidden" id="selectedBrand" value="Apple">
+                <input type="text" id="modelNumber" placeholder="Model number (e.g. iPhone 14, Galaxy S23)" style="margin-top: 8px;">
+            </div>
+
+            <div class="input-group"><label>How did you lose it? (Brief Description)</label><textarea id="howLost" rows="2" placeholder="Describe scenario..."></textarea></div>
+            <div class="input-group">
+                <label>Upload Bill / FIR / Proof image</label>
+                <div class="image-upload" id="imageUploadBox"><i class="fas fa-cloud-upload-alt"></i> Click to upload
+                    <input type="file" id="proofImage" accept="image/*" style="display:none;">
+                    <img id="imagePreview" class="preview-img" style="display:none;">
+                </div>
+            </div>
+            <div class="fee-preview"><span><i class="fas fa-hand-holding-usd"></i> Service Charge (30%): <strong>Only after successful recovery</strong></span><span id="feeShow">₹0</span></div>
+            <button type="submit" class="btn-liquid"><i class="fas fa-paper-plane"></i> SUBMIT REPORT & SEND TO TEAM</button>
+            <p style="font-size:0.7rem; text-align:center; margin-top:0.8rem;">🔒 No recovery = ₹0 fees. Our customer support contacts you within 24h.</p>
+        </form>
+    </div>
+
+    <!-- Success Stories (Reviews with location and recovery images) -->
+    <div id="reviews-section" class="fade-in">
+        <div class="reviews-header">
+            <h2><i class="fab fa-instagram"></i> Customer success stories & recovered phones</h2>
+            <button id="reviewImageBtn" class="review-image-btn"><i class="fas fa-camera"></i> Add review with image</button>
+        </div>
+        <div class="reviews-grid" id="reviewList"></div>
+    </div>
+
+    <!-- Feedback Section with Images (Now directs to Instagram) -->
+    <div id="feedback-section" class="fade-in" style="margin-top: 1rem;">
+        <div class="feedback-header">
+            <h2><i class="fab fa-instagram"></i> Leave a Review on Instagram</h2>
+            <a id="instagramFeedbackBtn" class="feedback-add-btn" href="#" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-instagram"></i> Comment on Instagram Post
+            </a>
+        </div>
+        <div class="feedback-grid" id="feedbackList"></div>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">
+            ⚡ Click the button above to share your experience directly in our Instagram comments!
+        </p>
+    </div>
+
+    <!-- Contact Footer -->
+    <div id="contact" class="glass-card fade-in" style="text-align: center;">
+        <h3><i class="fas fa-address-card"></i> Connect with us</h3>
+        <p style="margin: 0.8rem 0;"><i class="fas fa-envelope"></i> Email: <strong>lostphonelocatorwithdetails@gmail.com</strong></p>
+        <div class="footer-social">
+            <a href="https://www.instagram.com/phone_recovery_portal" target="_blank"><i class="fab fa-instagram"></i> Instagram: @phone_recovery_portal</a>
+            <a href="#"><i class="fab fa-facebook"></i> Facebook: coming soon</a>
+            <a href="#"><i class="fas fa-phone-alt"></i> Contact: coming soon</a>
+        </div>
+        <div class="design-credit"><i class="fas fa-code"></i> designed by CyberXcode</div>
+    </div>
+    <footer><i class="fas fa-shield-alt"></i> 10,000+ devices recovered | No recovery = No fee</footer>
+</div>
+
+<!-- Floating feedback button - now opens Instagram -->
+<a href="https://www.instagram.com/p/REPLACE_WITH_YOUR_POST_ID/" class="feedback-float" target="_blank" rel="noopener noreferrer" id="floatingInstagramBtn">
+    <i class="fab fa-instagram"></i>
+</a>
+
+<div id="toastMsg" class="toast"><i class="fas fa-info-circle"></i> <span></span></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- INSTAGRAM CONFIGURATION ---
+        // 🔴 IMPORTANT: Replace this URL with the link to your specific Instagram post/reel
+        const INSTAGRAM_POST_URL = "https://www.instagram.com/p/REPLACE_WITH_YOUR_POST_ID/";
+        
+        // Set the Instagram link for both buttons
+        const instagramBtns = document.querySelectorAll('#instagramFeedbackBtn, #floatingInstagramBtn');
+        instagramBtns.forEach(btn => {
+            if (btn) btn.href = INSTAGRAM_POST_URL;
+        });
+        // --- END CONFIGURATION ---
+
+        function setRandomAccent() { 
+            const hue = Math.floor(Math.random() * 360); 
+            const primary = `hsl(${hue}, 78%, 58%)`; 
+            const secondary = `hsl(${(hue+38)%360}, 80%, 65%)`; 
+            document.body.style.setProperty('--dynamic-primary', primary); 
+            document.body.style.setProperty('--dynamic-secondary', secondary); 
+        }
+        setRandomAccent();
+
+        // Chart
+        const chartCtx = document.getElementById('recoveryChart').getContext('2d');
+        new Chart(chartCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Successful returns',
+                    data: [48, 62, 87, 104, 132, 168],
+                    borderColor: getComputedStyle(document.body).getPropertyValue('--dynamic-primary').trim(),
+                    backgroundColor: 'rgba(0, 210, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#92fe9d'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { labels: { color: 'white' } } },
+                scales: { y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'white' } }, x: { ticks: { color: 'white' } } }
+            }
+        });
+
+        // Reviews
+        let reviews = [
+            { name: "Rahul Mehta", location: "Mumbai", rating: 5, text: "Got my iPhone 14 Pro back within 6 days! Incredible service.", img: "https://randomuser.me/api/portraits/men/32.jpg", recoveryImage: "https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=300" },
+            { name: "Sneha Kapoor", location: "Delhi", rating: 5, text: "Professional team, helped with police FIR. 30% fee is absolutely fair.", img: "https://randomuser.me/api/portraits/women/68.jpg", recoveryImage: null },
+            { name: "Vikram Singh", location: "Bangalore", rating: 4, text: "Quick response and real-time tracking. Highly recommended.", img: "https://randomuser.me/api/portraits/men/45.jpg", recoveryImage: null }
+        ];
+        function renderReviews() {
+            const container = document.getElementById('reviewList');
+            if (container) container.innerHTML = reviews.map(rev => `
+                <div class="review-card">
+                    <div class="reviewer">
+                        <img class="reviewer-img" src="${rev.img}">
+                        <div><strong>${rev.name}</strong><br><span style="font-size:0.7rem; opacity:0.7">📍 ${rev.location}</span></div>
+                    </div>
+                    <div class="stars">${'★'.repeat(rev.rating)}${'☆'.repeat(5-rev.rating)}</div>
+                    <p style="margin-top: 8px; font-size:0.85rem;">“${rev.text}”</p>
+                    ${rev.recoveryImage ? `<img src="${rev.recoveryImage}" class="recovery-phone-img">` : ''}
+                </div>
+            `).join('');
+        }
+        renderReviews();
+        document.getElementById('reviewImageBtn')?.addEventListener('click', () => {
+            let name = prompt("Your full name:");
+            if (!name) return;
+            let location = prompt("Your city:");
+            let text = prompt("Share your success story:");
+            let imgUrl = prompt("Avatar image URL (optional):", "https://randomuser.me/api/portraits/women/99.jpg");
+            let recoveryImg = prompt("Paste URL of your recovered phone image (optional):", "https://images.pexels.com/photos/47261/phone-iphone-5s-mobile-phone-47261.jpeg?auto=compress&cs=tinysrgb&w=300");
+            if (text && name) {
+                reviews.unshift({ name, location: location || "Customer", rating: 5, text, img: imgUrl || "https://randomuser.me/api/portraits/lego/1.jpg", recoveryImage: recoveryImg || null });
+                renderReviews();
+                showToastMessage("✨ Review added!", false);
+            } else showToastMessage("Review not added", true);
+        });
+
+        // Brand selector
+        let selectedBrand = "Apple";
+        document.querySelectorAll('.brand-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.brand-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                selectedBrand = opt.getAttribute('data-brand');
+                document.getElementById('selectedBrand').value = selectedBrand;
+            });
+        });
+        document.querySelector('.brand-option').classList.add('selected');
+
+        // Static feedback examples (can be removed if not needed)
+        let feedbacks = [
+            { name:"Rajesh Kumar", message:"Amazing service! Got my phone back in 5 days.", image:"https://randomuser.me/api/portraits/men/15.jpg", attachment:null },
+            { name:"Neha Singh", message:"The IMEI tracking is very accurate.", image:"https://randomuser.me/api/portraits/women/25.jpg", attachment:null },
+            { name:"Amit Patel", message:"Customer support is excellent.", image:"https://randomuser.me/api/portraits/men/67.jpg", attachment:"https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=200" }
+        ];
+        function renderFeedback() {
+            const container = document.getElementById('feedbackList');
+            if (container) container.innerHTML = feedbacks.map(fb => `<div class="feedback-card"><div class="feedback-author"><img class="feedback-img" src="${fb.image}"><div><strong>${fb.name}</strong></div></div><p>“${fb.message}”</p>${fb.attachment ? `<img src="${fb.attachment}" class="feedback-attachment">` : ''}</div>`).join('');
+        }
+        renderFeedback();
+
+        // Remove old modals as they are no longer needed for the main feedback
+        const oldFeedbackModal = document.getElementById('feedbackModalNew');
+        if (oldFeedbackModal) oldFeedbackModal.remove();
+        const oldGeneralModal = document.getElementById('feedbackModal');
+        if (oldGeneralModal) oldGeneralModal.remove();
+
+        // Side menu, quick buttons
+        const menu = document.getElementById('sideMenu'), overlay = document.getElementById('menuOverlay'), menuToggle = document.getElementById('menuToggleBtn');
+        if (menuToggle) menuToggle.onclick = () => { menu.classList.add('open'); overlay.classList.add('active'); };
+        if (overlay) overlay.onclick = () => { menu.classList.remove('open'); overlay.classList.remove('active'); };
+        document.querySelectorAll('.menu-item').forEach(item => item.addEventListener('click', () => { showToastMessage(`🔧 ${item.innerText} — agent will assist.`, false); menu.classList.remove('open'); overlay.classList.remove('active'); }));
+        ['quickLostBtn','quickStolenBtn','quickIMEIBtn','quickStatusBtn'].forEach(id => { const btn = document.getElementById(id); if(btn) btn.onclick = () => { showToastMessage(`✅ ${btn.innerText} — fill the form below.`, false); document.getElementById('report-form')?.scrollIntoView({ behavior:'smooth' }); }; });
+
+        function showToastMessage(msg, isErr=false) { const toast = document.getElementById('toastMsg'); if(toast) { toast.querySelector('span').innerText = msg; toast.style.opacity = '1'; toast.style.background = isErr ? '#b91c1c' : '#1e293b'; setTimeout(() => toast.style.opacity = '0', 3500); } }
+
+        // Form logic with email template
+        const phoneVal = document.getElementById('phoneValue'), feeSpan = document.getElementById('feeShow');
+        if (phoneVal) phoneVal.addEventListener('input', () => { let v = parseFloat(phoneVal.value); feeSpan.innerText = (isNaN(v)||v<=0) ? '₹0' : `₹${(v*0.3).toFixed(0)}`; });
+        let uploadedFile = null;
+        const uploadBox = document.getElementById('imageUploadBox'), fileInput = document.getElementById('proofImage'), preview = document.getElementById('imagePreview');
+        if (uploadBox) uploadBox.addEventListener('click', () => fileInput.click());
+        if (fileInput) fileInput.addEventListener('change', (e) => { if(e.target.files[0]){ uploadedFile = e.target.files[0]; const reader = new FileReader(); reader.onload = ev => { preview.src = ev.target.result; preview.style.display = 'block'; }; reader.readAsDataURL(uploadedFile); } else { uploadedFile = null; preview.style.display = 'none'; } });
+
+        const form = document.getElementById('lostPhoneForm');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const required = ['customerName','ownerContact','lostPlace','lostDateTime','policeReport','currentAddress','deliveryPlace','phoneNumber1','imei1','userEmail','phoneValue'];
+                if (required.some(id => !document.getElementById(id).value.trim())) { showToastMessage("❌ Fill all required fields.", true); return; }
+                const imei = document.getElementById('imei1').value.trim();
+                if (imei.length < 14) { showToastMessage("⚠️ IMEI must be 14-15 digits.", true); return; }
+                const value = parseFloat(document.getElementById('phoneValue').value);
+                if (isNaN(value) || value <= 0) { showToastMessage("Invalid phone value", true); return; }
+                const serviceCharge = (value * 0.3).toFixed(0);
+                const customerName = document.getElementById('customerName').value;
+                const ownerName = document.getElementById('ownerName').value.trim();
+                const ownerNameDisplay = ownerName === "" ? "Same as customer" : ownerName;
+                const lostDateTime = document.getElementById('lostDateTime').value.replace('T', ' ');
+                const lostPlace = document.getElementById('lostPlace').value;
+                const howLost = document.getElementById('howLost').value.trim() || "Not specified";
+                const phone1 = document.getElementById('phoneNumber1').value;
+                const phone2 = document.getElementById('phoneNumber2').value.trim() || "N/A";
+                const imei2 = document.getElementById('imei2').value.trim() || "N/A";
+                const policeReport = document.getElementById('policeReport').value;
+                const email = document.getElementById('userEmail').value;
+                const contact = document.getElementById('ownerContact').value;
+                const currentAddr = document.getElementById('currentAddress').value;
+                const deliveryAddr = document.getElementById('deliveryPlace').value;
+                const brand = selectedBrand;
+                const model = document.getElementById('modelNumber').value.trim();
+                const phoneModel = model ? `${brand} ${model}` : brand;
+                const imageName = uploadedFile ? uploadedFile.name : "No image uploaded";
+
+                const emailBody = `Dear Support Team,
+
+I hope you are doing well.
+
+I am submitting my mobile loss report and recovery request. Please find all the details below:
+Customer Name        : ${customerName}
+👥 Owner Name           : ${ownerNameDisplay}
+📞 Owner Contact        : ${contact}
+📍 Lost Place           : ${lostPlace}
+⏱️ Lost Date/Time       : ${lostDateTime}
+❓ How Lost             : ${howLost}
+👮 Police Report        : ${policeReport}
+🏠 Current Address      : ${currentAddr}
+📱 Lost Phone #1        : ${phone1}
+📱 Lost Phone #2        : ${phone2}
+🔢 IMEI (SIM1)          : ${imei}
+🔢 IMEI (SIM2)          : ${imei2}
+🚚 Delivery Place       : ${deliveryAddr}
+✉️ Reporting Email      : ${email}
+Mobile : ${phoneModel}
+💰 Phone Value (₹)      : ₹${value.toLocaleString()}
+💸 Estimated Recovery Fee: ₹${parseInt(serviceCharge).toLocaleString()} (30%) (30% of value, only if recovered)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🙏 Kindly process my request and assist me in recovering my device. I agree to the applicable service charge mentioned above.
+
+Please contact me if any additional information is required.
+
+Thank you for your support.
+
+Best regards,
+${customerName}
+
+
+
+⚠️ IMPORTANT: This report includes all details. Please ATTACH the uploaded bill/box/FIR image (if any) to this email before sending.
+📎 Image file name: ${imageName}
+
+📢 No recovery = No fees. Our team will contact you soon.
+-- Phone Recovery Management System --`;
+
+                const subject = `LOST PHONE REPORT - ${customerName}`;
+                window.location.href = `mailto:lostphonelocatorwithdetails@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+                showToastMessage("📧 Email client opened. Please attach the image (if any) before sending. We'll respond within 24h.", false);
+            });
+        }
+    });
+</script>
+</body>
+</html>            border-radius: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
